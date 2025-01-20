@@ -57,7 +57,7 @@ export default {
         list: [
           { title: 'T-Shirts', value: 'T-Shirts' },
           { title: 'Shorts', value: 'Shorts' },
-          { title: 'Jeans', value: 'jJeans' },
+          { title: 'Jeans', value: 'Jeans' },
           { title: 'Hoodies', value: 'Hoodies' },
           { title: 'Shirts', value: 'Shirts' },
         ],

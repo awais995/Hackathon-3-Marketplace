@@ -20,6 +20,7 @@ const CategoryPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
 
+  // used a useEffect to fetch data from sanity through api route.
   useEffect(() => {
     const fetchProducts = async () => {
       const res = await fetch("/api/products");

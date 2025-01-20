@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { urlFor } from "../sanity/lib/image";
 
 export const RelatedProducts = () => {
   const [products, setProducts] = useState<any[]>([]);

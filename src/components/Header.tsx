@@ -129,7 +129,7 @@ const Header = () => {
 
         {/* Cart & Account */}
         <div className="flex items-center space-x-4">
-          <Link href={`/productpage/5/cart`}>
+          <Link href={`/cart`}>
             <svg
               className="w-6 h-6"
               fill="none"

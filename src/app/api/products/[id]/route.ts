@@ -4,6 +4,11 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const { id } = params;
 
+  // Validate the ID
+  if (!id || typeof id !== "string") {
+    return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+  }
+
   try {
     const query = `
       *[_type == "products" && _id == $id][0] {
@@ -28,7 +33,12 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    return NextResponse.json(product);
+    // Add caching headers for better performance
+    const headers = {
+      "Cache-Control": "public, max-age=3600", // Cache for 1 hour
+    };
+
+    return NextResponse.json(product, { headers });
   } catch (error) {
     console.error("Error fetching product:", error);
     return NextResponse.json(

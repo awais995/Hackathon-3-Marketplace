@@ -1,14 +1,16 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import products from "../../../products.json";
 
-const OrderSummary: React.FC = () => {
+interface OrderSummaryProps {
+  products: any[];
+}
+
+const OrderSummary: React.FC<OrderSummaryProps> = ({ products }) => {
   const [cart, setCart] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch cart data from localStorage
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(storedCart);
   }, []);
@@ -17,14 +19,15 @@ const OrderSummary: React.FC = () => {
     return <div>Your cart is empty</div>;
   }
 
-  // Calculate totals for all cart items
   const cartDetails = cart.map((cartItem) => {
-    const product = products.find((item) => item.id === cartItem.id);
+    const product = products.find((item) => item._id === cartItem.id);
     if (!product) return null;
 
     const subtotal = product.price * cartItem.quantity;
-    const discountAmount = product.discount ? subtotal * product.discount : 0;
-    const total = subtotal - discountAmount + (product.deliveryFee > 0 ? product.deliveryFee : 0);
+    const discountAmount = product.discountPercent
+      ? (subtotal * product.discountPercent) / 100
+      : 0;
+    const total = subtotal - discountAmount;
 
     return {
       ...product,
@@ -43,7 +46,7 @@ const OrderSummary: React.FC = () => {
       {cartDetails.map(
         (item) =>
           item && (
-            <div key={item.id} className="mb-6 border-b pb-4">
+            <div key={item._id} className="mb-6 border-b pb-4">
               <h3 className="font-bold text-md md:text-lg">{item.name}</h3>
               <div className="flex justify-between text-sm md:text-md mb-2">
                 <span>Quantity</span>
@@ -56,10 +59,6 @@ const OrderSummary: React.FC = () => {
               <div className="flex justify-between text-sm md:text-md mb-2">
                 <span>Discount</span>
                 <span className="text-red-500">-${item.discountAmount.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-sm md:text-md mb-2">
-                <span>Delivery Fee</span>
-                <span>{item.deliveryFee > 0 ? `$${item.deliveryFee.toFixed(2)}` : "Free"}</span>
               </div>
               <div className="flex justify-between text-md md:text-lg font-bold">
                 <span>Total</span>
@@ -74,20 +73,8 @@ const OrderSummary: React.FC = () => {
         <span>${grandTotal.toFixed(2)}</span>
       </div>
 
-      {/* Promo Code */}
-      <div className="flex items-center mt-4">
-        <input
-          type="text"
-          placeholder="Add promo code"
-          className="w-full border border-gray-300 rounded-l-md px-3 py-2 text-sm"
-        />
-        <button className="bg-black text-white px-4 py-2 rounded-r-md text-sm hover:bg-gray-800">
-          Apply
-        </button>
-      </div>
-
       {/* Checkout Button */}
-      <Link href={`/productpage/product/cart/checkout`}>
+      <Link href="/checkout">
         <button className="w-full bg-black text-white mt-6 py-3 rounded-md text-md hover:bg-gray-800">
           Go to Checkout →
         </button>

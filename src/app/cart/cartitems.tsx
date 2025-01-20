@@ -1,52 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const CartItem = () => {
+interface CartItemProps {
+  products: any[];
+}
+
+const CartItem: React.FC<CartItemProps> = ({ products }) => {
   const [cart, setCart] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch products from the API
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch("/api/products");
-      if (!response.ok) throw new Error("Failed to fetch products");
-      const data = await response.json();
-      setProducts(data);
-    } catch (err) {
-      console.error("Error fetching products:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch cart data from localStorage
   useEffect(() => {
+    // Fetch cart data from localStorage
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(storedCart);
   }, []);
 
-  // Fetch products on component mount
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   const removeFromCart = (id: string) => {
-    const updatedCart = cart.filter((item: any) => item.id !== id);
+    const updatedCart = cart.filter((item) => item.id !== id);
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  if (loading) return <div>Loading...</div>;
-
-  if (cart.length === 0) return <div>Your cart is empty!</div>;
+  if (cart.length === 0) {
+    return <div className="text-center text-xl">Your cart is empty!</div>;
+  }
 
   return (
     <div>
-      {cart.map((cartItem: any) => {
-        // Find product details from the fetched products array
-        const product = products.find((item: any) => item._id === cartItem.id);
+      {cart.map((cartItem) => {
+        const product = products.find((item) => item._id === cartItem.id);
 
         if (!product) {
           return <div key={cartItem.id}>Product not found</div>;
